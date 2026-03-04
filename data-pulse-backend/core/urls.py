@@ -39,5 +39,7 @@ urlpatterns = [
     # 4 Endpoint de Portafolio
     path("api/portafolios/", include("portfolios.urls")),
     # 5 Endpoint de Indice de Riesgos
-    path('api/', include('analytics.urls')),
+    path("api/", include("analytics.urls")),
+    # 5 Endpoint de Alertas
+    path("api/", include("notifications.urls")),
 ]
