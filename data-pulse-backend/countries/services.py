@@ -1,11 +1,15 @@
+import requests
+from datetime import datetime, timedelta
+from django.db import transaction
+
+# Importaciones de tus apps
 from .models import Pais
 from exchange_rate.models import TipoCambio
 from indicators.models import IndicadorEconomico
-from datetime import (
-    datetime,
-    timedelta,
-)  # Añadimos timedelta para buscar el día anterior
-import requests
+from notifications.models import (
+    Alerta,
+)  # Asegúrate de que el nombre de la app sea correcto
+from .logic import calcular_irpc_pais  # Tu lógica de cálculo de score
 
 # --- MAPEO DE INDICADORES BANCO MUNDIAL ---
 WORLD_BANK_INDICATORS = {
@@ -18,31 +22,72 @@ WORLD_BANK_INDICATORS = {
 }
 
 
-def obtener_indicadores_pais(moneda_codigo):
-    try:
-        url = f"https://open.er-api.com/v6/latest/USD"
-        response = requests.get(url, timeout=5)
-        data = response.json()
-        if response.status_code == 200:
-            tasas = data.get("rates", {})
-            valor = tasas.get(moneda_codigo.upper(), "N/A")
-            return {
-                "tipo_cambio_usd": valor,
-                "moneda_base": "USD",
-                "moneda_destino": moneda_codigo.upper(),
-                "actualizado": data.get("time_last_update_utc", "Desconocido"),
-                "fuente": "ExchangeRate-API (Real-time data)",
-            }
-    except Exception as e:
-        return {"error": "No se pudo conectar con el servicio económico externo."}
-    return {"error": "Datos no disponibles"}
+def evaluar_y_crear_alertas(
+    pais_obj, irpc_actual, irpc_anterior=None, variacion_cambio=0.0
+):
+    """
+    Motor de reglas 6 a 10.
+    """
+
+    # --- REGLA 6: CRITICAL - IRPC < 25 ---
+    if irpc_actual < 25:
+        Alerta.objects.create(
+            pais=pais_obj,
+            tipo_alerta=Alerta.TipoAlerta.RIESGO,
+            severidad=Alerta.Severidad.CRITICAL,
+            titulo="RIESGO PAÍS CRÍTICO",
+            mensaje=f"El IRPC ha caído a {irpc_actual}. El país se encuentra en zona de alto riesgo.",
+        )
+
+    # --- REGLA 7: WARNING - Caída > 15 puntos ---
+    if irpc_anterior is not None:
+        if (irpc_anterior - irpc_actual) > 15:
+            Alerta.objects.create(
+                pais=pais_obj,
+                tipo_alerta=Alerta.TipoAlerta.RIESGO,
+                severidad=Alerta.Severidad.WARNING,
+                titulo="Deterioro Rápido de Riesgo",
+                mensaje=f"El IRPC cayó de {irpc_anterior} a {irpc_actual} puntos bruscamente.",
+            )
+
+    # --- REGLA 8: WARNING - Variación Cambio > 3% ---
+    if abs(variacion_cambio) > 3.0:
+        Alerta.objects.create(
+            pais=pais_obj,
+            tipo_alerta=Alerta.TipoAlerta.TIPO_CAMBIO,
+            severidad=Alerta.Severidad.WARNING,
+            titulo="Volatilidad Cambiaria",
+            mensaje=f"Se detectó una variación del {round(variacion_cambio, 2)}% en el tipo de cambio.",
+        )
+
+    # --- REGLA 10: CRITICAL - Inflación > 50% ---
+    # Buscamos el último dato de inflación guardado
+    inflacion = (
+        IndicadorEconomico.objects.filter(pais=pais_obj, tipo="INFLACION")
+        .order_by("-anio")
+        .first()
+    )
+    if inflacion and inflacion.valor > 50:
+        Alerta.objects.get_or_create(  # Usamos get_or_create para evitar duplicar alertas de inflación iguales
+            pais=pais_obj,
+            tipo_alerta=Alerta.TipoAlerta.INDICADOR,
+            severidad=Alerta.Severidad.CRITICAL,
+            titulo="Hiperinflación Detectada",
+            mensaje=f"Inflación superior al 50% ({inflacion.valor}%). Inestabilidad monetaria severa.",
+        )
+
+    # --- REGLA 9: INFO - Sincronización Exitosa ---
+    Alerta.objects.create(
+        pais=pais_obj,
+        tipo_alerta=Alerta.TipoAlerta.INDICADOR,
+        severidad=Alerta.Severidad.INFO,
+        titulo="Sincronización de Datos",
+        mensaje=f"Indicadores actualizados correctamente. Nuevo IRPC: {irpc_actual}.",
+    )
 
 
+# --- SINCRONIZACIÓN DE TIPOS DE CAMBIO ---
 def sincronizar_todos_los_indicadores():
-    """
-    Actualizado: Consulta ExchangeRate-API y calcula la variación diaria
-    comparando con el registro del día anterior en la BD.
-    """
     url = "https://open.er-api.com/v6/latest/USD"
     try:
         response = requests.get(url, timeout=10)
@@ -51,9 +96,8 @@ def sincronizar_todos_los_indicadores():
 
         data = response.json()
         tasas = data.get("rates", {})
-
         hoy = datetime.now().date()
-        ayer = hoy - timedelta(days=1)  # Fecha para buscar el registro histórico
+        ayer = hoy - timedelta(days=1)
 
         paises = Pais.objects.all()
         conteo = 0
@@ -63,16 +107,16 @@ def sincronizar_todos_los_indicadores():
             if codigo and codigo.upper() in tasas:
                 tasa_actual = float(tasas[codigo.upper()])
 
-                # --- LÓGICA DE VARIACIÓN DIARIA ---
-                # Buscamos si existe una tasa guardada del día anterior
+                # Cálculo de variación
                 tasa_ayer_obj = TipoCambio.objects.filter(pais=pais, fecha=ayer).first()
-
                 variacion = 0.0
                 if tasa_ayer_obj and tasa_ayer_obj.tasa > 0:
-                    tasa_ayer = float(tasa_ayer_obj.tasa)
-                    # Fórmula: ((Actual - Anterior) / Anterior) * 100
-                    variacion = ((tasa_actual - tasa_ayer) / tasa_ayer) * 100
+                    variacion = (
+                        (tasa_actual - float(tasa_ayer_obj.tasa))
+                        / float(tasa_ayer_obj.tasa)
+                    ) * 100
 
+                # Guardar Tasa
                 TipoCambio.objects.update_or_create(
                     pais=pais,
                     fecha=hoy,
@@ -80,20 +124,21 @@ def sincronizar_todos_los_indicadores():
                         "tasa": tasa_actual,
                         "moneda_destino": "USD",
                         "fuente": "ExchangeRate-API (Sincronización)",
-                        "variacion_porcentual": round(
-                            variacion, 4
-                        ),  # Guardamos la variación calculada
+                        "variacion_porcentual": round(variacion, 4),
                     },
                 )
+
+                # RECALCULAR IRPC Y ALERTAS
+                score = calcular_irpc_pais(pais)
+                ejecutar_sistema_alertas(pais, score, variacion)
                 conteo += 1
-        return (
-            True,
-            f"Sincronización exitosa: {conteo} países actualizados con cálculo de variación.",
-        )
+
+        return True, f"Tasas actualizadas: {conteo} países procesados."
     except Exception as e:
         return False, str(e)
 
 
+# --- SINCRONIZACIÓN BANCO MUNDIAL ---
 def sincronizar_indicadores_banco_mundial():
     paises_objetivo = ["CO", "BR", "MX", "AR", "CL", "PE", "EC", "UY", "PY", "PA"]
     date_range = "2019:2023"
@@ -128,55 +173,69 @@ def sincronizar_indicadores_banco_mundial():
                                     },
                                 )
                                 conteo_registros += 1
+
+            # Tras actualizar indicadores macro, recalculamos IRPC y lanzamos Alerta INFO
+            score = calcular_irpc_pais(pais_obj)
+            ejecutar_sistema_alertas(pais_obj, score)
+
         return True, f"Banco Mundial: {conteo_registros} registros sincronizados."
     except Exception as e:
         return False, f"Error WB: {str(e)}"
 
 
+# --- SINCRONIZACIÓN PERFIL PAÍSES ---
 def sincronizar_perfil_paises_rest():
-    """
-    Consume REST Countries API para actualizar la información básica de los 10 países.
-    """
     paises_objetivo = ["CO", "BR", "MX", "AR", "CL", "PE", "EC", "UY", "PY", "PA"]
     base_url = "https://restcountries.com/v3.1/alpha/{}"
     conteo = 0
 
     try:
         for iso_code in paises_objetivo:
-            url = base_url.format(iso_code)
-            response = requests.get(url, timeout=10)
-
+            response = requests.get(base_url.format(iso_code), timeout=10)
             if response.status_code == 200:
-                data = response.json()[0]  # La API devuelve una lista con un objeto
+                data = response.json()[0]
 
-                # Extracción de datos con manejo de seguridad (get)
-                nombre_oficial = data.get("name", {}).get("official", "N/A")
-                poblacion = data.get("population", 0)
-                coordenadas = data.get("latlng", [0.0, 0.0])
-                bandera_url = data.get("flags", {}).get("png", "")
-
-                # Manejo de moneda (viene como diccionario dinámico: {"COP": {"name": "...", "symbol": "..."}})
+                # Manejo de moneda
                 currencies = data.get("currencies", {})
                 moneda_codigo = list(currencies.keys())[0] if currencies else "N/A"
                 moneda_nombre = currencies.get(moneda_codigo, {}).get("name", "N/A")
 
-                # Actualización en nuestra base de datos
-                # Asegúrate de que tu modelo Pais tenga estos campos (latitud, longitud, bandera_url, etc.)
                 Pais.objects.update_or_create(
                     codigo_iso=iso_code,
                     defaults={
-                        "nombre": data.get("name", {}).get("common", nombre_oficial),
+                        "nombre": data.get("name", {}).get("common"),
                         "moneda_codigo": moneda_codigo,
                         "moneda_nombre": moneda_nombre,
-                        "poblacion": poblacion,
-                        "latitud": coordenadas[0],
-                        "longitud": coordenadas[1],
-                        # "bandera_url": bandera_url, # Agrega este campo a tu modelo si es necesario
+                        "poblacion": data.get("population", 0),
+                        "latitud": data.get("latlng", [0, 0])[0],
+                        "longitud": data.get("latlng", [0, 0])[1],
                         "activo": True,
                     },
                 )
                 conteo += 1
-
-        return True, f"Perfiles de países actualizados: {conteo} países procesados."
+        return True, f"Perfiles actualizados: {conteo} países."
     except Exception as e:
-        return False, f"Error en REST Countries Sync: {str(e)}"
+        return False, str(e)
+
+
+def obtener_indicadores_pais(moneda_codigo):
+    """
+    Mantiene la compatibilidad con las vistas existentes.
+    """
+    try:
+        url = f"https://open.er-api.com/v6/latest/USD"
+        response = requests.get(url, timeout=5)
+        data = response.json()
+        if response.status_code == 200:
+            tasas = data.get("rates", {})
+            valor = tasas.get(moneda_codigo.upper(), "N/A")
+            return {
+                "tipo_cambio_usd": valor,
+                "moneda_base": "USD",
+                "moneda_destino": moneda_codigo.upper(),
+                "actualizado": data.get("time_last_update_utc", "Desconocido"),
+                "fuente": "ExchangeRate-API (Real-time data)",
+            }
+    except Exception as e:
+        return {"error": f"Error de conexión: {str(e)}"}
+    return {"error": "Datos no disponibles"}
