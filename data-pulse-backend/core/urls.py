@@ -36,7 +36,8 @@ urlpatterns = [
     # 3. Países y sus derivados
     # Usamos un solo punto de entrada para países
     path("api/paises/", include("countries.urls")),
-    
-    #4 Endpoint de Portafolio
+    # 4 Endpoint de Portafolio
     path("api/portafolios/", include("portfolios.urls")),
+    # 5 Endpoint de Indice de Riesgos
+    path('api/', include('analytics.urls')),
 ]
