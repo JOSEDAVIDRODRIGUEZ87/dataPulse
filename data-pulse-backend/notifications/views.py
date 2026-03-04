@@ -5,7 +5,6 @@ from django.db.models import Count, Q
 from .models import Alerta
 from django.shortcuts import get_object_or_404
 
-
 class ListaAlertasView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -99,6 +98,7 @@ class MarcarTodasLeidasView(APIView):
                 "conteo_actualizado": cantidad,
             }
         )
+
 
 class ResumenAlertasView(APIView):
     permission_classes = [IsAuthenticated]

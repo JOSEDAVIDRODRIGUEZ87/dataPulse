@@ -4,6 +4,9 @@ from .views import (
     DetalleRiesgoPaisView,
     HistoricoRiesgoFiltroView,
     CalcularRiesgoMasivoView,
+    DashboardResumenView,
+    DashboardMapaView,
+    DashboardTendenciasView,
 )
 
 urlpatterns = [
@@ -22,5 +25,14 @@ urlpatterns = [
         "riesgo/<str:codigo_iso>/historico/",
         HistoricoRiesgoFiltroView.as_view(),
         name="riesgo-historico-filtro",
+    ),
+    path(
+        "dashboard/resumen/", DashboardResumenView.as_view(), name="dashboard-resumen"
+    ),
+    path("dashboard/mapa/", DashboardMapaView.as_view(), name="dashboard-mapa"),
+    path(
+        "dashboard/tendencias/",
+        DashboardTendenciasView.as_view(),
+        name="dashboard-tendencias",
     ),
 ]
