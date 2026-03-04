@@ -83,3 +83,8 @@ class PortafolioDetalleSerializer(serializers.ModelSerializer):
         if hasattr(obj, "posiciones"):
             return obj.posiciones.count()
         return 0
+
+class PortafolioResumenSerializer(serializers.Serializer):
+    distribucion_pais = serializers.DictField()
+    distribucion_tipo_activo = serializers.DictField()
+    total_invertido = serializers.DecimalField(max_digits=12, decimal_places=2)

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import PortafolioListCreateView, PortafolioDetailView
+from .views import PortafolioListCreateView, PortafolioDetailView, PortafolioResumenView,ExportarPortafolioPDFView
 from position.views import (
     PosicionCreateView,
     PosicionDetailView,
@@ -20,5 +20,13 @@ urlpatterns = [
         "<int:portfolio_pk>/posiciones/<int:pk>/",
         PosicionDetailView.as_view(),
         name="posicion-detail",
+    ),
+    path(
+        "<int:pk>/resumen/", PortafolioResumenView.as_view(), name="portafolio-resumen"
+    ),
+    path(
+        "<int:pk>/export/pdf/",
+        ExportarPortafolioPDFView.as_view(),
+        name="portafolio-export-pdf",
     ),
 ]
