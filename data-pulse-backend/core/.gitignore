@@ -1,0 +1,23 @@
+# Entornos virtuales (veo que tienes dos nombres distintos)
+.venv/
+venv/
+env/
+
+# Base de datos local (SQLite)
+*.sqlite3
+
+# Archivos de caché de Python
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# Variables de entorno (donde guardas contraseñas y llaves secretas)
+.env
+
+# Archivos de configuración de VS Code
+.vscode/
+
+# Distribución / Paquetes
+node_modules/
+dist/
+build/

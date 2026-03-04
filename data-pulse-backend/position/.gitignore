@@ -1,0 +1,12 @@
+.venv/
+venv/
+env/
+ENV/
+
+**/venv/
+**/.venv/
+
+**/__pycache__/
+*.py[cod]
+
+*.sqlite3
