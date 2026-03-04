@@ -5,51 +5,72 @@ from django.db.models import Count, Q
 from .models import Alerta
 from django.shortcuts import get_object_or_404
 
+from core.pagination import StandardResultsSetPagination
+
+
 class ListaAlertasView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        # 1. Filtrar alertas del usuario O alertas globales (usuario=None)
+        # --- ORDENAMIENTO DINÁMICO ---
+        # Permitimos que el frontend ordene por fecha o severidad (?ordering=severidad)
+        ordering = request.query_params.get("ordering", "-fecha_creacion")
+        allowed_ordering = [
+            "fecha_creacion",
+            "-fecha_creacion",
+            "severidad",
+            "-severidad",
+        ]
+
+        if ordering not in allowed_ordering:
+            ordering = "-fecha_creacion"
+
         queryset = Alerta.objects.filter(
             Q(usuario=request.user) | Q(usuario__isnull=True)
-        )
+        ).order_by(ordering)
 
-        # 2. Filtro: leída / no leída (?leida=true / ?leida=false)
+        # --- FILTROS (Mantenemos tu lógica pero estandarizada) ---
         leida_param = request.query_params.get("leida")
         if leida_param is not None:
             queryset = queryset.filter(leida=leida_param.lower() == "true")
 
-        # 3. Filtro: tipo de alerta (?tipo=RIESGO)
         tipo_param = request.query_params.get("tipo")
         if tipo_param:
-            queryset = queryset.filter(tipo_alerta=tipo_param)
+            queryset = queryset.filter(tipo_alerta=tipo_param.upper())
 
-        # 4. Filtro: severidad (?severidad=CRITICAL)
         severidad_param = request.query_params.get("severidad")
         if severidad_param:
-            queryset = queryset.filter(severidad=severidad_param)
+            queryset = queryset.filter(severidad=severidad_param.upper())
 
-        # 5. Formatear la respuesta
-        data = [
-            {
-                "id": alerta.id,
-                "pais": (
-                    alerta.pais.nombre
-                    if hasattr(alerta.pais, "nombre")
-                    else str(alerta.pais)
-                ),
-                "tipo": alerta.get_tipo_alerta_display(),
-                "severidad": alerta.get_severidad_display(),
-                "titulo": alerta.titulo,
-                "mensaje": alerta.mensaje,
-                "leida": alerta.leida,
-                "fecha": alerta.fecha_creacion.strftime("%Y-%m-%d %H:%M"),
-                "es_global": alerta.usuario is None,
-            }
-            for alerta in queryset
-        ]
+        # --- PAGINACIÓN (Tu implementación manual está perfecta para APIView) ---
+        paginator = StandardResultsSetPagination()
+        page = paginator.paginate_queryset(queryset, request)
 
-        return Response({"total": len(data), "alertas": data})
+        if page is not None:
+            # 3. Formatear solo los datos de la página actual
+            data = [
+                {
+                    "id": alerta.id,
+                    "pais": (
+                        alerta.pais.nombre
+                        if hasattr(alerta.pais, "nombre")
+                        else str(alerta.pais)
+                    ),
+                    "tipo": alerta.get_tipo_alerta_display(),
+                    "severidad": alerta.get_severidad_display(),
+                    "titulo": alerta.titulo,
+                    "mensaje": alerta.mensaje,
+                    "leida": alerta.leida,
+                    "fecha": alerta.fecha_creacion.strftime("%Y-%m-%d %H:%M"),
+                    "es_global": alerta.usuario is None,
+                }
+                for alerta in page
+            ]
+            # 4. Retornar la respuesta con metadatos (count, next, previous)
+            return paginator.get_paginated_response(data)
+
+        # Fallback (aunque con PageNumberPagination siempre entra al if anterior)
+        return Response({"alertas": []})
 
 
 class MarcarAlertaLeidaView(APIView):

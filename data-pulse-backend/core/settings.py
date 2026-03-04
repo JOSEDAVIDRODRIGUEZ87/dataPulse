@@ -136,5 +136,20 @@ AUTH_USER_MODEL = "users.User"
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    )
+    ),
+    "PAGE_SIZE": 20,
+    "EXCEPTION_HANDLER": "core.exceptions.custom_exception_handler",
+    # --- REQUISITOS TRANSVERSALES: THROTTLING ---
+    "DEFAULT_THROTTLE_CLASSES": [
+        # Para usuarios no identificados (identifica por IP)
+        "rest_framework.throttling.AnonRateThrottle",
+        # Para usuarios logueados (identifica por ID de usuario)
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {
+        # Configuración solicitada: 20 req/min para anónimos
+        "anon": "20/min",
+        # Configuración solicitada: 100 req/min para autenticados
+        "user": "100/min",
+    },
 }

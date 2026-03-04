@@ -1,4 +1,4 @@
-from rest_framework import generics,status
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
@@ -7,6 +7,41 @@ from portfolios.models import Portafolio  # Importamos el modelo padre
 from .models import Posicion
 from .serializers import PosicionSerializer
 
+from core.pagination import StandardResultsSetPagination
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
+
+
+class PosicionListView(generics.ListAPIView):
+    serializer_class = PosicionSerializer
+    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+
+    # REQUISITOS TRANSVERSALES
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+
+    # Filtros por campos exactos (?tipo_activo=ACCION)
+    filterset_fields = ["tipo_activo", "pais"]
+
+    # Búsqueda por texto en campos relacionados
+    search_fields = ["pais__nombre", "tipo_activo"]
+
+    # Ordenamiento dinámico (?ordering=-monto_inversion_usd)
+    ordering_fields = ["fecha_entrada", "monto_inversion_usd", "fecha_salida"]
+    ordering = ["-fecha_entrada"]  # Orden por defecto
+
+    def get_queryset(self):
+        portfolio_id = self.kwargs.get("portfolio_pk")
+        # Mantenemos la seguridad: Solo posiciones de mis portafolios
+        return Posicion.objects.filter(
+            portafolio_id=portfolio_id, portafolio__usuario=self.request.user
+        ).select_related(
+            "pais"
+        )  # Optimización: evita N+1 consultas al serializar el país
 
 class PosicionCreateView(generics.CreateAPIView):
     """

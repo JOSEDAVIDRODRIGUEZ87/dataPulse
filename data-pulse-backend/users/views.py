@@ -16,18 +16,25 @@ class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
+    def perform_create(self, serializer):
+        # El Exception Handler atrapará cualquier error de validación (email duplicado, etc.)
+        user = serializer.save()
+
+    # Sobrescribimos la respuesta de éxito para que coincida con tu formato
+    def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            return Response(
-                {
-                    "message": "Usuario creado exitosamente",
-                    "user": {"username": user.username, "email": user.email},
-                },
-                status=status.HTTP_201_CREATED,
-            )
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+
+        user = serializer.instance
+        return Response(
+            {
+                "status": "success",
+                "message": "Usuario creado exitosamente",
+                "user": {"username": user.username, "email": user.email},
+            },
+            status=status.HTTP_201_CREATED,
+        )
 
 
 # --- VISTA DE LOGIN (Nueva) ---
@@ -45,21 +52,17 @@ class LoginView(TokenObtainPairView):
 class UserProfileView(views.APIView):
     permission_classes = [IsAuthenticated]
 
-    # El método GET para VER el perfil
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
 
-    # NUEVO: El método PUT para ACTUALIZAR el perfil
     def put(self, request):
-        # Pasamos 'instance' para que DRF sepa que es una actualización y no una creación
+        # Al usar raise_exception=True, DRF lanza la excepción automáticamente
+        # y nuestro Core se encarga de enviarla con el formato bonito al cliente.
         serializer = UserSerializer(request.user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(
-                {"message": "Perfil actualizado con éxito", "user": serializer.data},
-                status=status.HTTP_200_OK,
-            )
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"message": "Perfil actualizado con éxito", "user": serializer.data}
+        )

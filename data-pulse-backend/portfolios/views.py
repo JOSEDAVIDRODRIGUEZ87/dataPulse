@@ -4,11 +4,14 @@ from django.core.exceptions import ValidationError
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 
-from rest_framework import generics, status
+from rest_framework import generics, status, filters  # <--- Agregado filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError as DRFValidationError
+from django_filters.rest_framework import (
+    DjangoFilterBackend,
+)  # <--- Agregado DjangoFilter
 
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
@@ -20,10 +23,44 @@ from .models import Portafolio
 from .serializers import PortafolioSerializer, PortafolioDetalleSerializer
 from position.models import Posicion
 
+from core.pagination import StandardResultsSetPagination
+from rest_framework import generics, filters, permissions
+from core.permissions import IsAnalistaRole
+
 
 class PortafolioListCreateView(generics.ListCreateAPIView):
     serializer_class = PortafolioSerializer
-    permission_classes = [IsAuthenticated]
+    pagination_class = StandardResultsSetPagination
+
+    # --- REQUISITOS TRANSVERSALES: FILTROS, BÚSQUEDA Y ORDEN ---
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+    filterset_fields = ["es_publico"]
+    search_fields = ["nombre", "descripcion"]
+    ordering_fields = ["nombre", "fecha_creacion"]
+    ordering = ["nombre"]
+
+    # --- REQUISITO TRANSVERSAL: PERMISOS POR ROL ---
+    def get_permissions(self):
+        """
+        Asigna permisos dinámicamente según el método HTTP.
+        """
+        if self.request.method == "POST":
+            # Solo ADMIN y ANALISTA pueden crear portafolios
+            return [IsAnalistaRole()]
+
+        # Para el método GET (Listar), cualquier usuario autenticado (incluye VIEWER)
+        return [permissions.IsAuthenticated()]
+
+    def get_queryset(self):
+        # Tu lógica de seguridad de datos existente se mantiene...
+        user = self.request.user
+        return Portafolio.objects.filter(
+            (Q(usuario=user) | Q(es_publico=True)), activo=True
+        ).distinct()
 
     def get_queryset(self):
         user = self.request.user

@@ -15,6 +15,7 @@ from portfolios.models import Portafolio
 from .models import IndiceRiesgo
 
 from django.db.models.functions import ExtractYear
+from core.pagination import StandardResultsSetPagination
 
 
 # 1. CLASE PARA EL RANKING GENERAL
@@ -22,26 +23,51 @@ class RankingRiesgoPaisView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        indices = IndiceRiesgo.objects.select_related("pais").order_by(
-            "-indice_compuesto"
-        )
-        data = [
-            {
-                "pais": (
-                    item.pais.nombre if hasattr(item.pais, "nombre") else str(item.pais)
-                ),
-                "indice_riesgo": item.indice_compuesto,
-                "nivel": item.get_nivel_riesgo_display(),
-                "scores": {
-                    "economico": item.score_economico,
-                    "cambiario": item.score_cambiario,
-                    "estabilidad": item.score_estabilidad,
-                },
-                "actualizado_el": item.fecha_calculo.strftime("%Y-%m-%d"),
-            }
-            for item in indices
+        ordering = request.query_params.get("ordering", "-indice_compuesto")
+        allowed_ordering = [
+            "indice_compuesto",
+            "-indice_compuesto",
+            "pais__nombre",
+            "-pais__nombre",
+            "fecha_calculo",
         ]
-        return Response(data)
+        if ordering not in allowed_ordering:
+            ordering = "-indice_compuesto"
+
+        # 1. Obtener el queryset base
+        indices = IndiceRiesgo.objects.select_related("pais").order_by(ordering)
+
+        # 2. Instanciar el paginador
+        paginator = StandardResultsSetPagination()
+
+        # 3. Paginar el queryset
+        page = paginator.paginate_queryset(indices, request)
+
+        if page is not None:
+            # 4. Construir la data solo para los elementos de la página actual
+            data = [
+                {
+                    "pais": (
+                        item.pais.nombre
+                        if hasattr(item.pais, "nombre")
+                        else str(item.pais)
+                    ),
+                    "indice_riesgo": item.indice_compuesto,
+                    "nivel": item.get_nivel_riesgo_display(),
+                    "scores": {
+                        "economico": item.score_economico,
+                        "cambiario": item.score_cambiario,
+                        "estabilidad": item.score_estabilidad,
+                    },
+                    "actualizado_el": item.fecha_calculo.strftime("%Y-%m-%d"),
+                }
+                for item in page
+            ]
+            # 5. Devolver respuesta con metadatos (count, next, previous)
+            return paginator.get_paginated_response(data)
+
+        # Fallback en caso de que la paginación no se aplique
+        return Response([])
 
 
 # 2. CLASE PARA EL DETALLE E HISTÓRICO
@@ -97,17 +123,25 @@ class HistoricoRiesgoFiltroView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, codigo_iso):
+        # Filtros existentes
         fecha_desde = request.query_params.get("desde")
         fecha_hasta = request.query_params.get("hasta")
 
+        # NUEVO: Filtro por nivel de riesgo (Query Param: ?nivel=CRITICO)
+        nivel_param = request.query_params.get("nivel")
+
         queryset = IndiceRiesgo.objects.filter(
             pais__codigo_iso=codigo_iso.upper()
-        ).order_by("fecha_calculo")
+        ).order_by(
+            "-fecha_calculo"
+        )  # Siempre ordenado para consistencia
 
         if fecha_desde:
             queryset = queryset.filter(fecha_calculo__date__gte=fecha_desde)
         if fecha_hasta:
             queryset = queryset.filter(fecha_calculo__date__lte=fecha_hasta)
+        if nivel_param:
+            queryset = queryset.filter(nivel_riesgo=nivel_param.upper())
 
         if not fecha_desde and not fecha_hasta:
             queryset = queryset[:30]
@@ -236,7 +270,18 @@ class DashboardMapaView(APIView):
         )
 
         # 2. Obtener los datos completos de esos registros
-        indices = IndiceRiesgo.objects.filter(id__in=ultimos_ids).select_related("pais")
+        indices = (
+            IndiceRiesgo.objects.filter(id__in=ultimos_ids)
+            .select_related("pais")
+            .only(
+                "pais__nombre",
+                "pais__codigo_iso",
+                "pais__latitud",
+                "pais__longitud",
+                "indice_compuesto",
+                "nivel_riesgo",
+            )
+        )
 
         # 3. Mapeo de colores según nivel
         colores_mapa = {

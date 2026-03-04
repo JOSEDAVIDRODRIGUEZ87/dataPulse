@@ -1,27 +1,32 @@
-from rest_framework import generics
+from rest_framework import generics, filters
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import TipoCambio
 from .serializers import TipoCambioSerializer
+from core.pagination import StandardResultsSetPagination
 
 
 class TipoCambioHistoricoListView(generics.ListAPIView):
     serializer_class = TipoCambioSerializer
+    pagination_class = StandardResultsSetPagination
+
+    # REQUISITOS TRANSVERSALES
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter]
+
+    # Definimos los filtros automáticos
+    # Esto reemplaza los 'if fecha_desde' manuales
+    filterset_fields = {
+        "fecha": [
+            "gte",
+            "lte",
+        ],  # Crea automáticamente ?fecha__gte=... y ?fecha__lte=...
+    }
+
+    # Campos por los que el usuario puede ordenar
+    ordering_fields = ["fecha", "tasa"]
+    ordering = ["-fecha"]  # Orden por defecto
 
     def get_queryset(self):
-        # 1. Obtenemos el código ISO de la URL (ej: 'CO')
+        # Mantenemos solo la lógica de filtrado por la URL (codigo_iso)
+        # porque es un parámetro estructural, no un query param opcional.
         codigo = self.kwargs["codigo_iso"].upper()
-
-        # 2. Empezamos filtrando por ese país
-        queryset = TipoCambio.objects.filter(pais_id=codigo)
-
-        # 3. Filtro por rango de fechas: ?desde=2024-01-01&hasta=2024-03-01
-        fecha_desde = self.request.query_params.get("desde")
-        fecha_hasta = self.request.query_params.get("hasta")
-
-        if fecha_desde:
-            # __gte: Greater Than or Equal (>=)
-            queryset = queryset.filter(fecha__gte=fecha_desde)
-        if fecha_hasta:
-            # __lte: Less Than or Equal (<=)
-            queryset = queryset.filter(fecha__lte=fecha_hasta)
-
-        return queryset
+        return TipoCambio.objects.filter(pais_id=codigo)
