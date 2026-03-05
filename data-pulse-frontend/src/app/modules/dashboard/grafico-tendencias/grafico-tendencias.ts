@@ -7,7 +7,7 @@ import { ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
 @Component({
   selector: 'app-grafico-tendencias',
   standalone: true,
-  imports: [CommonModule, FormsModule, BaseChartDirective],
+  imports: [CommonModule, FormsModule,BaseChartDirective],
   templateUrl: './grafico-tendencias.html',
   styleUrls: ['./grafico-tendencias.scss']
 })

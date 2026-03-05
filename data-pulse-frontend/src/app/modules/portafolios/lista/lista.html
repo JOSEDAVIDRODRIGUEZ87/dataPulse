@@ -1,1 +1,46 @@
-<p>lista works!</p>
+<div class="card border-0 shadow-sm rounded-4 p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold">Mis Portafolios</h4>
+        <button class="btn btn-primary" (click)="crear.emit()">+ Nuevo</button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Posiciones</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (p of portafolios; track p.id) {
+                <tr>
+                    <td class="fw-bold">{{ p.nombre }}</td>
+                    <td>
+                        <span class="badge"
+                            [ngClass]="p.esPublico ? 'bg-info-subtle text-info' : 'bg-secondary-subtle text-secondary'">
+                            {{ p.esPublico ? 'Público' : 'Propio' }}
+                        </span>
+                    </td>
+                    <td>{{ p.posiciones.length }} activos</td>
+                    <td class="text-end">
+                        <button class="btn btn-sm btn-outline-success me-2" (click)="exportarPDF(p)">
+                            <i class="bi bi-file-earmark-pdf"></i> PDF
+                        </button>
+                        <button class="btn btn-sm btn-outline-primary me-2" (click)="onEditar(p)">Editar</button>
+                        <button class="btn btn-sm btn-outline-danger" (click)="onEliminar(p.id)">Eliminar</button>
+                    </td>
+                </tr>
+                } @empty {
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-muted">
+                        No hay portafolios creados aún.
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

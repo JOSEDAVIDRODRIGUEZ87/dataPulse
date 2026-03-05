@@ -8,6 +8,7 @@ import { KpiCards } from './modules/dashboard/kpi-cards/kpi-cards';
 import { TablaRanking } from './modules/dashboard/tabla-ranking/tabla-ranking';
 import { GraficoTendencias } from './modules/dashboard/grafico-tendencias/grafico-tendencias';
 import { DetallePais } from './modules/paises/detalle-pais/detalle-pais'
+import { Portafolios } from './modules/portafolios/portafolios'
 export const routes: Routes = [
     { path: 'login', component: Login },
     { path: 'register', component: Register },
@@ -26,7 +27,8 @@ export const routes: Routes = [
         ]
     },
     { path: 'detalle-pais', component: DetallePais },
+    { path: 'app-portafolios', component: Portafolios },
     // Redirecciones
-    { path: '', redirectTo: 'detalle-pais', pathMatch: 'full' },
-    { path: '**', redirectTo: 'detalle-pais' }
+    { path: '', redirectTo: 'app-portafolios', pathMatch: 'full' },
+    { path: '**', redirectTo: 'app-portafolios' }
 ];

@@ -1,0 +1,44 @@
+<div class="container-fluid py-4 px-3">
+    <div class="row justify-content-center">
+        <div class="col-12 col-xl-10">
+
+            @if (modoVista === 'LISTAR') {
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="card p-3 shadow-sm border-0">
+                        <h6 class="text-muted">Total Invertido</h6>
+                        <h3 class="fw-bold text-primary">{{ totalInvertido() | currency }}</h3>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card p-3 shadow-sm border-0">
+                        <h6 class="text-muted">Riesgo Promedio Ponderado</h6>
+                        <h3 class="fw-bold text-danger">{{ riesgoPromedio() }}</h3>
+                    </div>
+                </div>
+            </div>
+            }
+
+            <main class="content-wrapper">
+                @if (modoVista === 'LISTAR') {
+                <app-lista [portafolios]="portafolios()" (editar)="abrirEditar($event)" (crear)="abrirCrear()">
+                </app-lista>
+                }
+
+                @if (modoVista === 'FORMULARIO') {
+                <app-crear [portafolioEditar]="portafolioAEditar" (save)="guardarPortafolio($event)"
+                    (cancelar)="modoVista = 'LISTAR'">
+                </app-crear>
+                }
+            </main>
+
+            @if (modoVista === 'LISTAR' && portafolios().length > 0) {
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <app-grafico-tendencias></app-grafico-tendencias>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
