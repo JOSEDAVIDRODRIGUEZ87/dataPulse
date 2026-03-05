@@ -1,0 +1,20 @@
+<div class="row g-3 mb-4">
+    @for (kpi of kpis; track kpi.title) {
+    <div class="col-md-6 col-xl-3">
+        <div class="card border-0 shadow-sm rounded-4 h-100 kpi-card">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <div [class]="'icon-shape bg-' + kpi.color + '-subtle text-' + kpi.color + ' rounded-3 p-3'">
+                        <i [class]="'bi ' + kpi.icon + ' fs-4'"></i>
+                    </div>
+                    <span class="text-muted small fw-medium">{{ kpi.trend }}</span>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1 small text-uppercase fw-bold">{{ kpi.title }}</h6>
+                    <h2 class="mb-0 fw-bold">{{ kpi.value }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    }
+</div>

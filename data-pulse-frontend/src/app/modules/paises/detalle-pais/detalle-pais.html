@@ -1,0 +1,82 @@
+<div class="container-fluid p-0">
+    <div class="card border-0 shadow-sm mb-4 overflow-hidden rounded-4">
+        <div class="card-body p-4 bg-white">
+            <div class="d-flex align-items-center">
+                <span class="fs-1 me-3">🇲🇽</span>
+                <div>
+                    <h2 class="fw-bold mb-0">{{ paisNombre }}</h2>
+                    <span class="badge bg-light text-dark border">Región: Norteamérica</span>
+                    <span class="ms-2 text-muted small">Población: 126M | Moneda: Peso Mexicano (MXN)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-md-3">
+            <div class="card border-0 shadow-sm rounded-4 mb-3 p-3">
+                <small class="text-muted fw-bold">PIB Actual</small>
+                <h3 class="mb-0 text-primary">$1.41T</h3>
+            </div>
+            <div class="card border-0 shadow-sm rounded-4 mb-3 p-3 text-danger">
+                <small class="text-muted fw-bold">Inflación Anual</small>
+                <h3 class="mb-0">4.8%</h3>
+            </div>
+            <div class="card border-0 shadow-sm rounded-4 p-3 bg-dark text-white">
+                <h6 class="small fw-bold border-bottom border-secondary pb-2">Índice de Riesgo Compuesto</h6>
+                <div class="d-flex justify-content-between mt-2 small">
+                    <span>Político: 72</span>
+                    <span>Económico: 65</span>
+                    <span>Social: 78</span>
+                </div>
+                <div class="progress mt-2" style="height: 8px;">
+                    <div class="progress-bar bg-warning" style="width: 71.6%"></div>
+                </div>
+                <div class="text-center mt-2 fw-bold text-warning">71.6 / 100</div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-9">
+            <div class="row g-4">
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4 p-4">
+                        <h6 class="fw-bold mb-4">Evolución de Indicadores (5 Años)</h6>
+                        <div style="height: 250px;">
+                            <canvas baseChart [data]="historicalData" [options]="chartOptions" type="line"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <div class="card border-0 shadow-sm rounded-4 p-4">
+                        <h6 class="fw-bold mb-4">Tipo de Cambio USD (Últimos 30 días)</h6>
+                        <div style="height: 200px;">
+                            <canvas baseChart [data]="currencyData" [options]="chartOptions" type="line"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 mt-4 p-4">
+        <h6 class="fw-bold mb-3">Historial de Calificaciones IRPC</h6>
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Fecha Revision</th>
+                    <th>Score Compuesto</th>
+                    <th>Estado</th>
+                    <th>Analista</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>05/03/2026</td>
+                    <td class="fw-bold text-primary">71.6</td>
+                    <td><span class="badge bg-success">Mejora</span></td>
+                    <td>Sistema DataPulse</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

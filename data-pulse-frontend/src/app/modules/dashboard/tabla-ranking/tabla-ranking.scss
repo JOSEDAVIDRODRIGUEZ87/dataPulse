@@ -1,0 +1,27 @@
+.table {
+    margin-bottom: 0;
+
+    thead th {
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+        border-top: none;
+        padding-bottom: 1rem;
+    }
+
+    tbody td {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f1f1f1;
+        font-size: 0.9rem;
+    }
+
+    // Quitar el borde de la última fila
+    tr:last-child td {
+        border-bottom: none;
+    }
+}
+
+.badge {
+    font-weight: 600;
+    font-size: 0.75rem;
+}

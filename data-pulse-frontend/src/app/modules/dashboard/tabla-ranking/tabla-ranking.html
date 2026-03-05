@@ -1,0 +1,53 @@
+<div class="card border-0 shadow-sm rounded-4 h-100">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0">Ranking Regional IRPC</h5>
+            <button class="btn btn-sm btn-outline-primary rounded-pill">Ver todos</button>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr class="small text-uppercase text-muted">
+                        <th>País</th>
+                        <th class="text-center">IRPC</th>
+                        <th>Nivel</th>
+                        <th class="text-center">Var.</th>
+                        <th class="text-end">Tend.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (pais of ranking; track pais.nombre) {
+                    <tr>
+                        <td>
+                            <span class="fw-bold text-dark">{{ pais.nombre }}</span>
+                        </td>
+                        <td class="text-center">
+                            <span class="fw-bold">{{ pais.irpc }}</span>
+                        </td>
+                        <td>
+                            <span class="badge rounded-pill px-2 py-1" [ngClass]="getClaseNivel(pais.irpc)">
+                                {{ getNivelRiesgo(pais.irpc) }}
+                            </span>
+                        </td>
+                        <td class="text-center small">
+                            <span [ngClass]="pais.variacion.includes('+') ? 'text-success' : 'text-danger'">
+                                {{ pais.variacion }}
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            @if (pais.tendencia === 'up') {
+                            <i class="bi bi-graph-up text-success fs-5"></i>
+                            } @else if (pais.tendencia === 'down') {
+                            <i class="bi bi-graph-down text-danger fs-5"></i>
+                            } @else {
+                            <i class="bi bi-dash-lg text-muted fs-5"></i>
+                            }
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

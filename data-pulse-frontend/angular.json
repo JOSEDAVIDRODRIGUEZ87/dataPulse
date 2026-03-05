@@ -2,11 +2,12 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "cli": {
-    "packageManager": "npm"
+    "packageManager": "npm",
+    "analytics": "90ff69be-4d87-4f75-940d-99dc52c181cd"
   },
   "newProjectRoot": "projects",
   "projects": {
-    "data-pulse-frontend": {
+    "nombre-del-proyecto": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -30,7 +31,12 @@
               }
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css",
               "src/styles.scss"
+            ],
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ]
           },
           "configurations": {
@@ -61,10 +67,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "data-pulse-frontend:build:production"
+              "buildTarget": "nombre-del-proyecto:build:production"
             },
             "development": {
-              "buildTarget": "data-pulse-frontend:build:development"
+              "buildTarget": "nombre-del-proyecto:build:development"
             }
           },
           "defaultConfiguration": "development"

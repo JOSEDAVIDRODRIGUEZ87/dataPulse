@@ -1,0 +1,26 @@
+<div class="card border-0 shadow-sm rounded-4">
+    <div class="card-body p-4">
+        <div class="d-md-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h5 class="fw-bold mb-0">Tendencias Históricas</h5>
+                <p class="text-muted small mb-0">Comparativa de riesgo últimos 5 años</p>
+            </div>
+
+            <div class="d-flex gap-2 mt-3 mt-md-0">
+                <select class="form-select form-select-sm rounded-pill border-light shadow-sm">
+                    <option>Indicador: IRPC</option>
+                    <option>Indicador: Inflación</option>
+                    <option>Indicador: Estabilidad Política</option>
+                </select>
+                <button class="btn btn-sm btn-light border rounded-pill shadow-sm">
+                    <i class="bi bi-download me-1"></i> Exportar
+                </button>
+            </div>
+        </div>
+
+        <div class="chart-container" style="position: relative; height: 350px; width: 100%;">
+            <canvas baseChart [data]="lineChartData" [options]="lineChartOptions" type="line">
+            </canvas>
+        </div>
+    </div>
+</div>

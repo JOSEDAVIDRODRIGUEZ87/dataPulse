@@ -1,0 +1,42 @@
+<div class="card border-0 shadow-sm rounded-4 h-100">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0">Mapa de Riesgo Regional</h5>
+            <div class="info-panel text-end">
+                <span class="d-block fw-bold text-primary">{{ tooltipNombre }}</span>
+                <span class="badge" [style.backgroundColor]="getTooltipBadgeColor()">
+                    IRPC: {{ tooltipValor }}
+                </span>
+            </div>
+        </div>
+
+        <div class="map-wrapper d-flex justify-content-center align-items-center">
+            <svg viewBox="200 100 450 850" class="latam-map" preserveAspectRatio="xMidYMid meet">
+
+                <path id="MX" class="pais-path" d="M280,180 L380,180 L400,250 L340,320 L240,270 Z"
+                    [style.fill]="getPaisColor('MX')" (mouseover)="mostrarInfo('MX')" />
+
+                <path id="CO" class="pais-path" d="M380,380 L440,380 L460,450 L400,480 L360,440 Z"
+                    [style.fill]="getPaisColor('CO')" (mouseover)="mostrarInfo('CO')" />
+
+                <path id="BR" class="pais-path" d="M450,420 L580,440 L650,550 L580,720 L450,680 L420,520 Z"
+                    [style.fill]="getPaisColor('BR')" (mouseover)="mostrarInfo('BR')" />
+
+                <path id="PE" class="pais-path" d="M360,460 L410,480 L420,590 L350,560 Z"
+                    [style.fill]="getPaisColor('PE')" (mouseover)="mostrarInfo('PE')" />
+
+                <path id="CL" class="pais-path" d="M400,700 L420,700 L430,950 L410,950 Z"
+                    [style.fill]="getPaisColor('CL')" (mouseover)="mostrarInfo('CL')" />
+
+                <path id="AR" class="pais-path" d="M430,700 L520,700 L540,920 L450,980 L435,880 Z"
+                    [style.fill]="getPaisColor('AR')" (mouseover)="mostrarInfo('AR')" />
+            </svg>
+        </div>
+
+        <div class="d-flex justify-content-center mt-3 gap-3 small fw-bold border-top pt-3">
+            <span class="d-flex align-items-center"><i class="bi bi-circle-fill text-success me-1"></i> Bajo</span>
+            <span class="d-flex align-items-center"><i class="bi bi-circle-fill text-warning me-1"></i> Medio</span>
+            <span class="d-flex align-items-center"><i class="bi bi-circle-fill text-danger me-1"></i> Crítico</span>
+        </div>
+    </div>
+</div>

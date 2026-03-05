@@ -1,0 +1,98 @@
+// --- 1. VARIABLES (Para cambiar colores o tamaños en un solo lugar) ---
+$primary-color: #0d6efd;
+$text-muted: #667085;
+$border-color: #eaecf0;
+$card-radius: 30px;
+$input-radius: 18px;
+$transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+// --- 2. MIXINS (Reutilización de código) ---
+@mixin flex-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+// --- 3. ESTILOS ---
+
+.main-auth-wrapper {
+    @include flex-center;
+    min-height: 100vh;
+    width: 100%;
+    background: radial-gradient(circle at center, #ffffff 0%, #f1f4f9 100%);
+    padding: 2rem;
+}
+
+.auth-card-container {
+    width: 100%;
+    max-width: 500px; // Ajustado a un ancho intermedio más elegante
+}
+
+.auth-card {
+    border: none;
+    border-radius: $card-radius;
+    background: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08) !important;
+
+    .card-body {
+        padding: 3.5rem !important; // Espaciado balanceado
+    }
+}
+
+header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+
+    h1 {
+        letter-spacing: -2px;
+        font-weight: 800;
+        color: $primary-color;
+    }
+
+    p {
+        color: $text-muted;
+        font-size: 1.1rem;
+    }
+}
+
+.form-control {
+    height: 65px !important; // Altura optimizada para no verse tosco
+    font-size: 1.1rem !important;
+    border-radius: $input-radius !important;
+    border: 2px solid $border-color !important;
+    transition: $transition-base;
+
+    &:focus {
+        border-color: $primary-color !important;
+        box-shadow: 0 0 0 4px rgba($primary-color, 0.1) !important;
+        background-color: #fff;
+    }
+}
+
+label {
+    font-size: 1rem !important;
+    padding-left: 1.2rem !important;
+    color: $text-muted !important;
+}
+
+.btn-primary {
+    height: 60px;
+    border-radius: $input-radius !important;
+    background-color: $primary-color;
+    font-size: 1.2rem !important;
+    font-weight: 600;
+    border: none;
+    transition: $transition-base;
+
+    // Combinación de tus dos versiones de hover
+    &:hover:not(:disabled) {
+        transform: translateY(-2px) scale(1.02);
+        filter: brightness(1.1);
+        box-shadow: 0 10px 25px rgba($primary-color, 0.25) !important;
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+}
