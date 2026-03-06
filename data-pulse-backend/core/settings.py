@@ -29,7 +29,7 @@ SECRET_KEY = "django-insecure-#u&f@v8u=v$ko29w=3yr%u8bggt#d7vg@eu-f&jr9c4kbbfzyo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'datapulse-ud95.onrender.com']
 
 
 # Application definition
