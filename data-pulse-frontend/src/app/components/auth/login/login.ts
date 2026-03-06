@@ -17,7 +17,7 @@ export class Login {
 
   // Usamos nonNullable para que TypeScript no se queje de que los valores pueden ser null
   loginForm = this.fb.nonNullable.group({
-    username: ['', [Validators.required]],
+    email: ['', [Validators.required]],
     password: ['', [Validators.required]]
   });
 

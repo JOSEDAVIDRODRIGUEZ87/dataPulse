@@ -10,9 +10,9 @@
 
                 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
                     <div class="form-floating mb-4">
-                        <input type="text" formControlName="username" class="form-control" id="user"
-                            placeholder="Usuario">
-                        <label for="user">Nombre de Usuario</label>
+                        <input type="email" formControlName="email" class="form-control" id="email"
+                            placeholder="nombre@ejemplo.com">
+                        <label for="email">Correo Electrónico</label>
                     </div>
 
                     <div class="form-floating mb-5">

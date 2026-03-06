@@ -1,0 +1,9 @@
+.nav-link {
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+  
+  &.active {
+    font-weight: bold;
+    border-bottom: 2px solid white; // Un toque elegante para saber dónde estás
+  }
+}

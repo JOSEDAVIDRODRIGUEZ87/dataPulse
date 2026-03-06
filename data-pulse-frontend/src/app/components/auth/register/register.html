@@ -12,9 +12,9 @@
 
             <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
                 <div class="mb-3">
-                    <label class="form-label small fw-bold">Usuario</label>
-                    <input type="text" formControlName="username" class="form-control"
-                        [class.is-invalid]="registerForm.get('username')?.touched && registerForm.get('username')?.invalid">
+                    <label class="form-label small fw-bold">Nombre Completo</label>
+                    <input type="text" formControlName="nombre_completo" class="form-control"
+                        [class.is-invalid]="registerForm.get('nombre_completo')?.touched && registerForm.get('nombre_completo')?.invalid">
                 </div>
 
                 <div class="mb-3">
@@ -31,8 +31,8 @@
 
                 <div class="mb-4">
                     <label class="form-label small fw-bold">Confirmar Contraseña</label>
-                    <input type="password" formControlName="confirmPassword" class="form-control"
-                        [class.is-invalid]="registerForm.hasError('notSame') && registerForm.get('confirmPassword')?.touched">
+                    <input type="password" formControlName="confirm_password" class="form-control"
+                        [class.is-invalid]="registerForm.hasError('notSame') && registerForm.get('confirm_password')?.touched">
                     @if (registerForm.hasError('notSame')) {
                     <div class="text-danger small mt-1">Las contraseñas no coinciden.</div>
                     }

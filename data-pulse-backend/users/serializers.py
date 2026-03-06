@@ -15,7 +15,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             "min_length": "La contraseña es muy corta. Debe tener al menos 8 caracteres."
         },
     )
-    confirm_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True, required=True) # Asegura el required=True
 
     class Meta:
         model = User

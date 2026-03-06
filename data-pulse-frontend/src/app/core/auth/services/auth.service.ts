@@ -2,18 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../../../environments/environment';
-
-// Definimos qué estructura esperamos de Django
-interface AuthResponse {
-  access: string;
-  refresh: string;
-  user: {
-    username: string;
-    email: string;
-    role: string;
-  };
-}
-
+import { AuthResponse } from '../../../../models/auth.models';
 @Injectable({
   providedIn: 'root'
 })
@@ -34,11 +23,12 @@ export class AuthService {
     }
   }
 
-  // LOGIN: Envía credenciales y guarda el token si es exitoso
-  login(credentials: { username: string; password: string }): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/users/login/`, credentials).pipe(
+  login(credentials: { email: string; password: string }): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login/`, credentials).pipe(
       tap(response => {
-        localStorage.setItem(this.TOKEN_KEY, response.access);
+        // Guardar ambos tokens para permitir la renovación automática
+        localStorage.setItem('access_token', response.access);
+        localStorage.setItem('refresh_token', response.refresh);
         this.currentUserSubject.next(response.user);
       })
     );
@@ -46,7 +36,7 @@ export class AuthService {
 
   // REGISTRO: Crea un nuevo usuario
   register(userData: any): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/users/register/`, userData);
+    return this.http.post(`${environment.apiUrl}/auth/register/`, userData);
   }
 
   // LOGOUT: Limpia todo y cierra sesión
