@@ -1,34 +1,35 @@
 import { Routes } from '@angular/router';
-import { Login } from '../app/modules/auth/login/login';
-import { Register } from '../app/modules/auth/register/register';
-// Importamos el componente principal del Dashboard
-import { Dashboard } from './modules/dashboard/dashboard';
-import { MapaRiesgo } from './modules/dashboard/mapa-riesgo/mapa-riesgo';
-import { KpiCards } from './modules/dashboard/kpi-cards/kpi-cards';
-import { TablaRanking } from './modules/dashboard/tabla-ranking/tabla-ranking';
-import { GraficoTendencias } from './modules/dashboard/grafico-tendencias/grafico-tendencias';
-import { DetallePais } from './modules/paises/detalle-pais/detalle-pais'
-import { Portafolios } from './modules/portafolios/portafolios'
-export const routes: Routes = [
-    { path: 'login', component: Login },
-    { path: 'register', component: Register },
 
-    // Nueva ruta para el Dashboard
-    { path: 'dashboard', component: Dashboard },
+export const routes: Routes = [
+    {
+        path: 'login',
+        loadComponent: () => import('./components/auth/login/login').then(m => m.Login)
+    },
+    {
+        path: 'register',
+        loadComponent: () => import('./components/auth/register/register').then(m => m.Register)
+    },
+
+    // Dashboard con Lazy Loading y Rutas Hijas
     {
         path: 'dashboard',
-        component: Dashboard,
+        loadComponent: () => import('./components/dashboard/dashboard').then(m => m.Dashboard),
         children: [
-            { path: 'app-mapa-riesgo', component: MapaRiesgo },
-            { path: 'app-kpi-cards', component: KpiCards },
-            { path: 'app-kpi-cards', component: TablaRanking },
-            { path: 'app-kpi-cards', component: TablaRanking },
-            { path: 'app-grafico-tendencias', component: GraficoTendencias },
+            { path: 'mapa-riesgo', loadComponent: () => import('./components/dashboard/mapa-riesgo/mapa-riesgo').then(m => m.MapaRiesgo) },
+            { path: 'kpi-cards', loadComponent: () => import('./components/dashboard/kpi-cards/kpi-cards').then(m => m.KpiCards) },
+            { path: 'ranking', loadComponent: () => import('./components/dashboard/tabla-ranking/tabla-ranking').then(m => m.TablaRanking) },
+            { path: 'tendencias', loadComponent: () => import('./components/dashboard/grafico-tendencias/grafico-tendencias').then(m => m.GraficoTendencias) },
         ]
     },
-    { path: 'detalle-pais', component: DetallePais },
-    { path: 'app-portafolios', component: Portafolios },
-    // Redirecciones
-    { path: '', redirectTo: 'app-portafolios', pathMatch: 'full' },
-    { path: '**', redirectTo: 'app-portafolios' }
+    {
+        path: 'detalle-pais',
+        loadComponent: () => import('./components/paises/detalle-pais/detalle-pais').then(m => m.DetallePais)
+    },
+    {
+        path: 'portafolios',
+        loadComponent: () => import('./components/portafolios/portafolios').then(m => m.Portafolios)
+    },
+
+    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+    { path: '**', redirectTo: 'dashboard' }
 ];

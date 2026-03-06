@@ -4,7 +4,7 @@ import { Portafolio } from '../../../models/portafolio.model';
 import { Posicion } from '../../../models/posicion.model';
 import { Lista } from './lista/lista'; // Ajusta la ruta
 import { Crear } from './crear/crear';     // Ajusta la ruta
-import { GraficoTendencias } from '../../modules/dashboard/grafico-tendencias/grafico-tendencias'; 
+import { GraficoTendencias } from '../../components/dashboard/grafico-tendencias/grafico-tendencias'; 
 
 @Component({
   selector: 'app-portafolios',

@@ -1,20 +1,34 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Portafolio } from '../../../models/portafolio.model';
+import { Observable, tap } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class PortafolioService {
-  portafolios = signal<Portafolio[]>(JSON.parse(localStorage.getItem('portafolios') || '[]'));
+  private http = inject(HttpClient);
+  private API_URL = 'https://api.datapulse.com/portafolios'; // Tu endpoint real
 
-  guardar(p: Portafolio) {
-    const lista = [...this.portafolios()];
-    const idx = lista.findIndex(i => i.id === p.id);
-    if (idx > -1) lista[idx] = p; else lista.push(p);
-    this.portafolios.set(lista);
-    localStorage.setItem('portafolios', JSON.stringify(lista));
+  // Señal que mantiene el estado actual
+  portafolios = signal<Portafolio[]>([]);
+
+  // 1. Cargar datos desde Backend (Ejecutar al iniciar)
+  cargarPortafolios(): Observable<Portafolio[]> {
+    return this.http.get<Portafolio[]>(this.API_URL).pipe(
+      tap(data => this.portafolios.set(data))
+    );
   }
 
-  eliminar(id: number) {
-    this.portafolios.update(list => list.filter(p => p.id !== id));
-    localStorage.setItem('portafolios', JSON.stringify(this.portafolios()));
+  // 2. Guardar (POST/PUT con manejo de estado optimista)
+  guardar(p: Portafolio): Observable<Portafolio> {
+    return this.http.post<Portafolio>(this.API_URL, p).pipe(
+      tap(nuevoP => {
+        this.portafolios.update(lista => [...lista, nuevoP]);
+      })
+    );
+  }
+
+  // 3. Validación Asíncrona (Requisito técnico 2.4)
+  verificarNombreUnico(nombre: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.API_URL}/check-name?nombre=${nombre}`);
   }
 }

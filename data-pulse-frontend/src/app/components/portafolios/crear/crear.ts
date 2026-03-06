@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Component, EventEmitter, Input, OnInit, Output, inject } from '@angular/core';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors, AsyncValidatorFn } from '@angular/forms';
 import { Portafolio } from '../../../../models/portafolio.model';
-
+import { PortafolioService } from '../../../core/services/portafolio.service'; // Ajusta la ruta a tu servicio
+import { debounceTime, map, catchError, of, Observable } from 'rxjs';
 @Component({
   selector: 'app-crear',
   standalone: true,
@@ -12,12 +13,14 @@ export class Crear implements OnInit {
   @Input() portafolioEditar?: Portafolio;
   @Output() save = new EventEmitter<Portafolio>();
   @Output() cancelar = new EventEmitter<void>();
+  private svc = inject(PortafolioService); // Inyectamos el servicio para la validación async
 
   form: FormGroup;
 
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
-      nombre: ['', Validators.required],
+      nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)], [this.nombreUnicoValidator()]],
+      descripcion: ['', [Validators.maxLength(500)]], // <--- IMPORTANTE
       esPublico: [false],
       posiciones: this.fb.array([])
     });
@@ -68,5 +71,14 @@ export class Crear implements OnInit {
       };
       this.save.emit(nuevoPortafolio);
     }
+  }
+  nombreUnicoValidator(): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      return this.svc.verificarNombreUnico(control.value).pipe(
+        debounceTime(500), // Evita saturar el backend mientras escribe
+        map(esUnico => (esUnico ? null : { nombreDuplicado: true })),
+        catchError(() => of(null))
+      );
+    };
   }
 }
