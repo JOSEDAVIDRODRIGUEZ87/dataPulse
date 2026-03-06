@@ -31,7 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'datapulse-ud95.onrender.com']
 
-
+CSRF_TRUSTED_ORIGINS = ['https://datapulse-ud95.onrender.com']
 # Application definition
 
 INSTALLED_APPS = [
