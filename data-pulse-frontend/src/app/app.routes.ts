@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 import { MainLayout } from './layouts/main-layout/main-layout';
+import { Login } from './components/auth/login/login';
 
 export const routes: Routes = [
+    { path: '', component: Login },
     {
         path: 'login',
         loadComponent: () => import('./components/auth/login/login').then(m => m.Login)

@@ -6,89 +6,19 @@ from django.db import transaction
 from .models import Pais
 from exchange_rate.models import TipoCambio
 from indicators.models import IndicadorEconomico
+from .constants import WORLD_BANK_INDICATORS, API_CONFIG, PAISES_LATAM_ISO
+from notifications.services import ejecutar_sistema_alertas
+from notifications.services import ejecutar_sistema_alertas
+from exchange_rate.services import obtener_variacion_cambiaria
 from notifications.models import (
     Alerta,
 )  # Asegúrate de que el nombre de la app sea correcto
 from .logic import calcular_irpc_pais  # Tu lógica de cálculo de score
 
-# --- MAPEO DE INDICADORES BANCO MUNDIAL ---
-WORLD_BANK_INDICATORS = {
-    "NY.GDP.MKTP.CD": "PIB",
-    "FP.CPI.TOTL.ZG": "INFLACION",
-    "SL.UEM.TOTL.ZS": "DESEMPLEO",
-    "NE.RSB.GNFS.ZS": "BALANZA_COMERCIAL",
-    "GC.DOD.TOTL.GD.ZS": "DEUDA_PIB",
-    "NY.GDP.PCAP.CD": "PIB_PERCAPITA",
-}
-
-
-def evaluar_y_crear_alertas(
-    pais_obj, irpc_actual, irpc_anterior=None, variacion_cambio=0.0
-):
-    """
-    Motor de reglas 6 a 10.
-    """
-
-    # --- REGLA 6: CRITICAL - IRPC < 25 ---
-    if irpc_actual < 25:
-        Alerta.objects.create(
-            pais=pais_obj,
-            tipo_alerta=Alerta.TipoAlerta.RIESGO,
-            severidad=Alerta.Severidad.CRITICAL,
-            titulo="RIESGO PAÍS CRÍTICO",
-            mensaje=f"El IRPC ha caído a {irpc_actual}. El país se encuentra en zona de alto riesgo.",
-        )
-
-    # --- REGLA 7: WARNING - Caída > 15 puntos ---
-    if irpc_anterior is not None:
-        if (irpc_anterior - irpc_actual) > 15:
-            Alerta.objects.create(
-                pais=pais_obj,
-                tipo_alerta=Alerta.TipoAlerta.RIESGO,
-                severidad=Alerta.Severidad.WARNING,
-                titulo="Deterioro Rápido de Riesgo",
-                mensaje=f"El IRPC cayó de {irpc_anterior} a {irpc_actual} puntos bruscamente.",
-            )
-
-    # --- REGLA 8: WARNING - Variación Cambio > 3% ---
-    if abs(variacion_cambio) > 3.0:
-        Alerta.objects.create(
-            pais=pais_obj,
-            tipo_alerta=Alerta.TipoAlerta.TIPO_CAMBIO,
-            severidad=Alerta.Severidad.WARNING,
-            titulo="Volatilidad Cambiaria",
-            mensaje=f"Se detectó una variación del {round(variacion_cambio, 2)}% en el tipo de cambio.",
-        )
-
-    # --- REGLA 10: CRITICAL - Inflación > 50% ---
-    # Buscamos el último dato de inflación guardado
-    inflacion = (
-        IndicadorEconomico.objects.filter(pais=pais_obj, tipo="INFLACION")
-        .order_by("-anio")
-        .first()
-    )
-    if inflacion and inflacion.valor > 50:
-        Alerta.objects.get_or_create(  # Usamos get_or_create para evitar duplicar alertas de inflación iguales
-            pais=pais_obj,
-            tipo_alerta=Alerta.TipoAlerta.INDICADOR,
-            severidad=Alerta.Severidad.CRITICAL,
-            titulo="Hiperinflación Detectada",
-            mensaje=f"Inflación superior al 50% ({inflacion.valor}%). Inestabilidad monetaria severa.",
-        )
-
-    # --- REGLA 9: INFO - Sincronización Exitosa ---
-    Alerta.objects.create(
-        pais=pais_obj,
-        tipo_alerta=Alerta.TipoAlerta.INDICADOR,
-        severidad=Alerta.Severidad.INFO,
-        titulo="Sincronización de Datos",
-        mensaje=f"Indicadores actualizados correctamente. Nuevo IRPC: {irpc_actual}.",
-    )
-
 
 # --- SINCRONIZACIÓN DE TIPOS DE CAMBIO ---
 def sincronizar_todos_los_indicadores():
-    url = "https://open.er-api.com/v6/latest/USD"
+    url = API_CONFIG["EXCHANGE_RATE"]
     try:
         response = requests.get(url, timeout=10)
         if response.status_code != 200:
@@ -130,7 +60,8 @@ def sincronizar_todos_los_indicadores():
 
                 # RECALCULAR IRPC Y ALERTAS
                 score = calcular_irpc_pais(pais)
-                ejecutar_sistema_alertas(pais, score, variacion)
+                variacion = obtener_variacion_cambiaria(pais)
+                ejecutar_sistema_alertas(pais, score, variacion=variacion)
                 conteo += 1
 
         return True, f"Tasas actualizadas: {conteo} países procesados."
@@ -140,7 +71,7 @@ def sincronizar_todos_los_indicadores():
 
 # --- SINCRONIZACIÓN BANCO MUNDIAL ---
 def sincronizar_indicadores_banco_mundial():
-    paises_objetivo = ["CO", "BR", "MX", "AR", "CL", "PE", "EC", "UY", "PY", "PA"]
+    paises_objetivo = PAISES_LATAM_ISO
     date_range = "2019:2023"
     base_url = (
         "https://api.worldbank.org/v2/country/{}/indicator/{}?date={}&format=json"
@@ -185,7 +116,7 @@ def sincronizar_indicadores_banco_mundial():
 
 # --- SINCRONIZACIÓN PERFIL PAÍSES ---
 def sincronizar_perfil_paises_rest():
-    paises_objetivo = ["CO", "BR", "MX", "AR", "CL", "PE", "EC", "UY", "PY", "PA"]
+    paises_objetivo = PAISES_LATAM_ISO
     base_url = "https://restcountries.com/v3.1/alpha/{}"
     conteo = 0
 
@@ -223,7 +154,7 @@ def obtener_indicadores_pais(moneda_codigo):
     Mantiene la compatibilidad con las vistas existentes.
     """
     try:
-        url = f"https://open.er-api.com/v6/latest/USD"
+        url = API_CONFIG["EXCHANGE_RATE"]
         response = requests.get(url, timeout=5)
         data = response.json()
         if response.status_code == 200:

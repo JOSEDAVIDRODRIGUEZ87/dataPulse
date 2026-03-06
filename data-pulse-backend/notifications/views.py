@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.db.models import Count, Q
 from .models import Alerta
 from django.shortcuts import get_object_or_404
-
+from .serializers import AlertaSerializer
 from core.pagination import StandardResultsSetPagination
 
 
@@ -47,30 +47,15 @@ class ListaAlertasView(APIView):
         page = paginator.paginate_queryset(queryset, request)
 
         if page is not None:
-            # 3. Formatear solo los datos de la página actual
-            data = [
-                {
-                    "id": alerta.id,
-                    "pais": (
-                        alerta.pais.nombre
-                        if hasattr(alerta.pais, "nombre")
-                        else str(alerta.pais)
-                    ),
-                    "tipo": alerta.get_tipo_alerta_display(),
-                    "severidad": alerta.get_severidad_display(),
-                    "titulo": alerta.titulo,
-                    "mensaje": alerta.mensaje,
-                    "leida": alerta.leida,
-                    "fecha": alerta.fecha_creacion.strftime("%Y-%m-%d %H:%M"),
-                    "es_global": alerta.usuario is None,
-                }
-                for alerta in page
-            ]
-            # 4. Retornar la respuesta con metadatos (count, next, previous)
-            return paginator.get_paginated_response(data)
+            # Serializamos los datos de la página actual
+            serializer = AlertaSerializer(page, many=True)
+            
+            # Retornar la respuesta con metadatos (count, next, previous)
+            return paginator.get_paginated_response(serializer.data)
 
-        # Fallback (aunque con PageNumberPagination siempre entra al if anterior)
-        return Response({"alertas": []})
+        # Fallback si no hay paginación activa
+        serializer = AlertaSerializer(queryset, many=True)
+        return Response(serializer.data)
 
 
 class MarcarAlertaLeidaView(APIView):
