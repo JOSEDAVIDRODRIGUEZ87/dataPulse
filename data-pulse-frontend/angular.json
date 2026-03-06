@@ -21,6 +21,13 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
+            "allowedCommonJsDependencies": [
+              "canvg",
+              "jspdf",
+              "html2canvas",
+              "rgbcolor",
+              "raf"
+            ],
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -48,8 +55,8 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
+                  "maximumWarning": "1mb",
+                  "maximumError": "2mb"
                 },
                 {
                   "type": "anyComponentStyle",
@@ -71,10 +78,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "nombre-del-proyecto:build:production"
+              "buildTarget": "data-pulse-frontend:build:production"
             },
             "development": {
-              "buildTarget": "nombre-del-proyecto:build:development"
+              "buildTarget": "data-pulse-frontend:build:development"
             }
           },
           "defaultConfiguration": "development"
