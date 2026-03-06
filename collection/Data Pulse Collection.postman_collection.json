@@ -8,6 +8,1094 @@
   },
   "item": [
     {
+      "name": "auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"juanita1.perez@correo.com\",\r\n    \"nombre_completo\": \"Juan Perez\",\r\n    \"password\": \"Password123*\",\r\n    \"confirm_password\": \"Password123*\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"david.rodriguez@correo.com\",\r\n    \"password\": \"demo1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Refresh",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"refresh\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc3Mjg2MjIzMSwiaWF0IjoxNzcyNzc1ODMxLCJqdGkiOiIxM2FkZmU2MTAwYTQ0ODdhYmNiYTFlMjlhNTY5ZDI5ZCIsInVzZXJfaWQiOiIxIn0.j-7J3gpEoTjmeLU2o9pu1gI88WmEK0QqXYMVGuqZc1U\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/refresh/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNTg1MTk4LCJpYXQiOjE3NzI1ODQ4OTgsImp0aSI6IjM1MjNlOTkxZTI3YzQ5M2U5N2IxYmU2NGRkNTFlMDI5IiwidXNlcl9pZCI6IjIifQ.IuLlzFDWtlmAKwfHnI5F60UU0AU_TsWFAa0NPLcg6KY",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Me",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzcwODkyLCJpYXQiOjE3NzI3NzA1OTIsImp0aSI6IjgyODk3YTYxZjI4OTQwOGY4MTE4NTdlOGExZjE4YmM2IiwidXNlcl9pZCI6IjEifQ.CdeuTvW1IDYuv4LEOV8-WPun1dAcy2C2RCgC2qhlFJs",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"david.rodrigue@correo.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/me/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "paises",
+      "item": [
+        {
+          "name": "Listar paises (con filtros por region)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzcxMDExLCJpYXQiOjE3NzI3NzA3MTEsImp0aSI6ImJlMDkxYWI0Yzc5MjRiZWI4MjI0NzJhY2QwY2VkOGZkIiwidXNlcl9pZCI6IjEifQ.cBu19uPrZ2TaUNrIzS_l-_2vGjsQwpq-P3EtXXbRwF0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/paises/?region=ANDINA",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "paises",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "region",
+                  "value": "ANDINA"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detalle de pais con indicadores",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNTkwMDQ2LCJpYXQiOjE3NzI1ODk3NDYsImp0aSI6IjZjMmJiYTEzMDBhMTQ2Y2I4Y2ZhYzRmMDk1YzlmMWNiIiwidXNlcl9pZCI6IjIifQ.-PJqcehSVc1-jyvuqEjG5erDPDChNd4OWtSxJnKzBDw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/paises/CO/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "paises",
+                "CO",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Disparar sincronizacion desde APIs externas (solo ADMIN)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzczMjc5LCJpYXQiOjE3NzI3NzI5NzksImp0aSI6Ijg0MDVjY2ZmOWY2NzRlYmM4YmJiNWI2YzE2NmY4MWNjIiwidXNlcl9pZCI6IjEifQ.Vva97OFD9KhpoeRp84MKBJqpDL4Admey5d2QY0sp-ps",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/paises/sync-indicadores/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "paises",
+                "sync-indicadores",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Disparar sincronizacion desde APIs externas (solo ADMIN) Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzczMzU0LCJpYXQiOjE3NzI3NzMwNTQsImp0aSI6IjlmOGE4NGU3OWEwYzQ3M2JhM2JjMGM3ZTY3NDUwNGNhIiwidXNlcl9pZCI6IjEifQ.gEmo-ypqxqHwtDL5BsIw_0sPdUqA8nI421ZmfXeH9RE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/paises/sync-worldbank/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "paises",
+                "sync-worldbank",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Indicadores de un pais (filtro por tipo, anio)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNTkxNTY2LCJpYXQiOjE3NzI1OTEyNjYsImp0aSI6IjU1YzFiMGIzMzVkYzQ1ZDc4YzY0NGM3MTg5YTViM2VlIiwidXNlcl9pZCI6IjIifQ.JwfuEgS1dq5IsRo2xWDNbwx16H_vJSkxXkLrZvy5FLs",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/paises/CO/indicadores/?tipo=PIB&anio=2024",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "paises",
+                "CO",
+                "indicadores",
+                ""
+              ],
+              "query": [
+                {
+                  "key": "tipo",
+                  "value": "PIB"
+                },
+                {
+                  "key": "anio",
+                  "value": "2024"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Paises por Indicador Historico por tipo de cambio",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNTkyOTA5LCJpYXQiOjE3NzI1OTI2MDksImp0aSI6IjZlZDE2ZWE5ZjIyYjRlNTc5YmJhYWMwNzU5ZDZiNjM0IiwidXNlcl9pZCI6IjIifQ.zTJC3pci2U8NqMVdyEZegpJ0F8tIjcVxk6JV4dRr6aE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/paises/CO/tipo-cambio/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "paises",
+                "CO",
+                "tipo-cambio",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Portafiolos",
+      "item": [
+        {
+          "name": "Listar portafolios del usuario + publicos",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNTk3NDc5LCJpYXQiOjE3NzI1OTcxNzksImp0aSI6IjE2NTNkMmY5ZWY4YTRiYzJhZjE1NTYxY2JmMzVhMjIxIiwidXNlcl9pZCI6IjMifQ.YuJNZpSrg4FDNr6cRbTEk2jk0po5F_aX_A3XzC08Bpw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/portafolios/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "portafolios",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Portafolio",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNTk1ODA2LCJpYXQiOjE3NzI1OTU1MDYsImp0aSI6IjFmY2ViMDlmOTgwMjRkYjU4OTNiYmY0M2U5YTE5OTlhIiwidXNlcl9pZCI6IjMifQ.3am14zLO_K6NcmzRK5YVTl3KuJ0U1L4mxeDFckQjH3M",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nombre\": \"Mi Portafolio de Cripto dos\",\r\n    \"descripcion\": \"Activos de alto riesgo\",\r\n    \"es_publico\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/portafolios/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "portafolios",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Posicion",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNTk4ODg2LCJpYXQiOjE3NzI1OTg1ODYsImp0aSI6IjdhMjZiYjcwODM1MTQ4MDFiOGI3NzNkOTgwM2ExNzcwIiwidXNlcl9pZCI6IjMifQ.A_d3-3fIbCZ32bhE89sCBWfevUWfXqsKVwv8X26LEck",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"pais\": \"US\", \r\n    \"monto_inversion_usd\": \"1500.50\",\r\n    \"fecha_entrada\": \"2026-03-03\",\r\n    \"tipo_activo\": \"RENTA_VARIABLE\",\r\n    \"notas\": \"Posición creada exitosamente\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/portafolios/3/posiciones/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "portafolios",
+                "3",
+                "posiciones",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upsate Posicion por id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNTk5MzcxLCJpYXQiOjE3NzI1OTkwNzEsImp0aSI6IjU4ZjJkMWFhYjliMzQ4YmZhYjM0ODhmZGIzNjhmMDUwIiwidXNlcl9pZCI6IjMifQ.lAiUPdQamXDPZqNZtU1CcfHuf4gbp6wL1ZMH2nOeg5M",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"pais\": \"US\",\r\n    \"tipo_activo\": \"RENTA_VARIABLE\",\r\n    \"monto_inversion_usd\": \"2000.00\", \r\n    \"fecha_entrada\": \"2026-03-03\",\r\n    \"notas\": \"Monto actualizado tras nueva revisión\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/portafolios/3/posiciones/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "portafolios",
+                "3",
+                "posiciones",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Posicion por id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNTk5MzcxLCJpYXQiOjE3NzI1OTkwNzEsImp0aSI6IjU4ZjJkMWFhYjliMzQ4YmZhYjM0ODhmZGIzNjhmMDUwIiwidXNlcl9pZCI6IjMifQ.lAiUPdQamXDPZqNZtU1CcfHuf4gbp6wL1ZMH2nOeg5M",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/portafolios/3/posiciones/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "portafolios",
+                "3",
+                "posiciones",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detalle con posiciones y metricas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNTk2MDExLCJpYXQiOjE3NzI1OTU3MTEsImp0aSI6IjBjZDVhNTc2NWUyNDQzYzI5NzA0MWQ1NzE0OTFlNzk2IiwidXNlcl9pZCI6IjMifQ.StZ2x8oL8u269LD0bEEXGDpyg-EEcyIGIFV3LUGXkGA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/portafolios/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "portafolios",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resumen",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNjAyMDI5LCJpYXQiOjE3NzI2MDE3MjksImp0aSI6ImM3MDkxYWRhNmNhZjQyZWI5OWM1ZWRkYzFjZmZlNGUxIiwidXNlcl9pZCI6IjMifQ.nOcL96yHrk-5LRqLKa_sKdPZghfmhQ7ibqVRXAXplkk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"portafolio\": \"Mi Inversión Retiro\",\r\n    \"total_invertido_usd\": 5000.00,\r\n    \"distribucion_pais\": {\r\n        \"US\": 3000.00,\r\n        \"CO\": 2000.00\r\n    },\r\n    \"distribucion_tipo_activo\": {\r\n        \"RENTA_VARIABLE\": 4000.00,\r\n        \"CRIPTOMONEDAS\": 1000.00\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/portafolios/3/resumen/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "portafolios",
+                "3",
+                "resumen",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Export Reporte PDF",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNjAyNDE3LCJpYXQiOjE3NzI2MDIxMTcsImp0aSI6IjBjNDMyMTUyYzI5NjQ3YzdiOTliOTY2YTMwMzAxNjQ4IiwidXNlcl9pZCI6IjMifQ.tnBLimPI_0-JTByRyKbGkIjzEuFl1Qn09htNa1ZpTHk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"portafolio\": \"Mi Inversión Retiro\",\r\n    \"total_invertido_usd\": 5000.00,\r\n    \"distribucion_pais\": {\r\n        \"US\": 3000.00,\r\n        \"CO\": 2000.00\r\n    },\r\n    \"distribucion_tipo_activo\": {\r\n        \"RENTA_VARIABLE\": 4000.00,\r\n        \"CRIPTOMONEDAS\": 1000.00\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/portafolios/3/export/pdf/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "portafolios",
+                "3",
+                "export",
+                "pdf",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Portafolio por Id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNTk3MTM3LCJpYXQiOjE3NzI1OTY4MzcsImp0aSI6ImU5NTJhMDFmMTE1MjQxM2E5NWYwM2MyNzQyODJiMTk4IiwidXNlcl9pZCI6IjMifQ.bukj3yZgy2PxTFli6oJRpNO7qa1N6IV0XYzFTzwYP-I",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"nombre\": \"Nuevo Nombre Portafolio\",\r\n    \"descripcion\": \"Descripción actualizada\",\r\n    \"es_publico\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/portafolios/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "portafolios",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Portafolio por Id Copy",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNTk2MDExLCJpYXQiOjE3NzI1OTU3MTEsImp0aSI6IjBjZDVhNTc2NWUyNDQzYzI5NzA0MWQ1NzE0OTFlNzk2IiwidXNlcl9pZCI6IjMifQ.StZ2x8oL8u269LD0bEEXGDpyg-EEcyIGIFV3LUGXkGA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/portafolios/1/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "portafolios",
+                "1",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Indice de Riesgo",
+      "item": [
+        {
+          "name": "Ranking de Paises con Riesgo",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNjI5MzExLCJpYXQiOjE3NzI2MjkwMTEsImp0aSI6IjE2OGNhMzVkMGNjMjQwZTQ4NmMyYmYwODQ4MTE2OGFhIiwidXNlcl9pZCI6IjMifQ.xxulPkzEaZ1T7q3tNIkSVSif4EI9XTYEwnQ8nvYvDfo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/riesgo/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "riesgo",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Detalle de riesgo de un pais con historico",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNjI5MzgwLCJpYXQiOjE3NzI2MjkwODAsImp0aSI6IjczNTUxOWUwMWQ0NjQ5NjQ5Nzc1YmQ1ZmViM2EyNjE0IiwidXNlcl9pZCI6IjMifQ.uO9XwiBX1mrX8-PODZT1ryyzJu0xs6jHZfJ551PGNrg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/riesgo/COL/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "riesgo",
+                "COL",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Historico de indices (filtro por rango)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNjI5NzI5LCJpYXQiOjE3NzI2Mjk0MjksImp0aSI6IjgxNTFlMDg2YjhlZTQ2N2Q5OTQ2NThiMzU2MDc0MGJiIiwidXNlcl9pZCI6IjMifQ.mQRU4cq8tsI0agCdoR62MLyC0HnbyPLCYIUdfH5aBtE",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/riesgo/COL/historico/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "riesgo",
+                "COL",
+                "historico",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Recalcular indices para todos los paises (solo ADMIN)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNjMwMDc2LCJpYXQiOjE3NzI2Mjk3NzYsImp0aSI6ImJmZTgyMjQ5NjVhMDRlMWI5YWQ1ZDg3ODhmNTYwNGI4IiwidXNlcl9pZCI6IjMifQ.zgoXAyKxygn4fpwjpaIR6XqYy0J49a56ApEmO8hMxhQ",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/riesgo/calcular/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "riesgo",
+                "calcular",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Alertas",
+      "item": [
+        {
+          "name": "Alertas de Usuarios",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNzc2MTQxLCJpYXQiOjE3NzI3NzU4NDEsImp0aSI6ImNjZWVjNTRlZTg5YzRkODU5NmU1YzdmMDAwNzg1Zjk0IiwidXNlcl9pZCI6IjEifQ.Zmrmax3nwh4sey6py7qfVy26r01IF8TYcn-2iHNy27w",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/alertas/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "alertas",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Conteo por tipo y severidad",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNjMyMzQ3LCJpYXQiOjE3NzI2MzIwNDcsImp0aSI6ImE4ZjE0NTA5YTQxZTQyNDliNGE1YjVmMmY1NTllYTczIiwidXNlcl9pZCI6IjMifQ.7Cg0N9xs-GHbYk74rQvnvzcamg8Sindkv_UL3nwEeQM",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/alertas/resumen/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "alertas",
+                "resumen",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar como leida",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNjMxMTMyLCJpYXQiOjE3NzI2MzA4MzIsImp0aSI6IjNlNDFmM2RhY2RhOTQ1ZjY4ZWE2MDI3YjU5YjM3ZmM3IiwidXNlcl9pZCI6IjMifQ.RItJa1hrIOj27x5nZb8nX8NQIy9XoPtD2Q3kn7uhmeI",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/alertas/1/leer/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "alertas",
+                "1",
+                "leer",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Marcar todas como leidas",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNjMxNTU3LCJpYXQiOjE3NzI2MzEyNTcsImp0aSI6ImE3ZDJmOTg5NjI3ZjRjMjdiOGE5NDg1ZTBiNTM0ODYxIiwidXNlcl9pZCI6IjMifQ.PWR2cQVJKO4NfAk56dADo8Wa8UH272RjBDW4_iWTsyI",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/alertas/leer-todas/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "alertas",
+                "leer-todas",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Panel",
+      "item": [
+        {
+          "name": "KPIs globales (total paises, alertas activas, portafolios)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNjMyOTY3LCJpYXQiOjE3NzI2MzI2NjcsImp0aSI6IjkzMWJiMDBhZDBlYzRkMmU4ODIyZWJkZWYyMDIxMTA2IiwidXNlcl9pZCI6IjMifQ.9U16a0BoKUfcV3XkTwkXNVkpBPpUdUn6xsTaOcf97co",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/resumen/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "resumen",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Datos para mapa: paises con coordenadas + indice riesgo + color",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNjMzNjYwLCJpYXQiOjE3NzI2MzMzNjAsImp0aSI6ImNjNTgzMDEyZjkzNTQzNDY5OTVmZjRkMmQ2NDhjMThlIiwidXNlcl9pZCI6IjMifQ.VBwPDk2vblfQocVd7K9GZuMxZUdJRAUODDqNpez_zpc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/mapa/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "mapa",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Datos de tendencia para graficos (indicadores ultimos 5 anios)",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzcyNjQxNTkxLCJpYXQiOjE3NzI2NDEyOTEsImp0aSI6IjliYWNhYTJmNGI3NTRiMDY5MDNmZTgxNDRiMTgyODVkIiwidXNlcl9pZCI6IjMifQ.LDnIiVPpxjwqcjwYY0OD89OlXzzAUshe-vw_uiBfMgk",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/dashboard/tendencias/",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "dashboard",
+                "tendencias",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "New Request",
       "request": {
         "method": "GET",
