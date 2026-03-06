@@ -19,12 +19,14 @@ from django.contrib import admin
 from django.urls import path, include
 from users.views import UserProfileView  # Importas tu vista
 from countries.views import PaisDetailView
+from django.shortcuts import redirect
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 
 urlpatterns = [
+    path('', lambda r: redirect('admin/', permanent=False)),
     path("admin/", admin.site.urls),
     # 1. Autenticación y Usuarios
     # Esto busca en users/urls.py. Si ahí tienes path('me/', ...),

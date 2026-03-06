@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', SECRET_KEY)
 # DEBUG debe ser False en Render para que WhiteNoise tome el control
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'datapulse-ud95.onrender.com']
 
