@@ -139,7 +139,8 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",  # URL por defecto de Angular
+    "http://localhost:4200", 
+    "https://data-pulse-alpha.vercel.app",# URL por defecto de Angular
 ]
 AUTH_USER_MODEL = "users.User"
 
