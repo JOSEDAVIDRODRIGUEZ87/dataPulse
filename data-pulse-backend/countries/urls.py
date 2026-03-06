@@ -11,7 +11,7 @@ from exchange_rate import urls as exchange_urls
 
 urlpatterns = [
     # --- LISTADO Y DETALLE ---
-    path("paises/", PaisListView.as_view(), name="listar-paises"),
+    path("", PaisListView.as_view(), name="listar-paises"),
     path("paises/<str:codigo_iso>/", PaisDetailView.as_view(), name="detalle-pais"),
     # --- INDICADORES POR PAÍS (Hispanoamérica) ---
     path(

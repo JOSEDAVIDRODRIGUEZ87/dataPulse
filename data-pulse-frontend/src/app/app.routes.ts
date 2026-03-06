@@ -35,7 +35,6 @@ export const routes: Routes = [
                     { path: 'tendencias', loadComponent: () => import('./components/dashboard/grafico-tendencias/grafico-tendencias').then(m => m.GraficoTendencias) },
                 ]
             },
-            // ... resto de rutas que necesitan Navbar
         ]
     },
     { path: '', redirectTo: 'login', pathMatch: 'full' },
