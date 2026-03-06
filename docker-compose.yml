@@ -1,0 +1,28 @@
+services:
+  # Backend: Django
+  backend:
+    build:
+      context: ./data-pulse-backend
+      dockerfile: Dockerfile
+    container_name: pulse_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - DEBUG=1
+      - ALLOWED_HOSTS=localhost,backend
+    volumes:
+      - ./data-pulse-backend:/app
+
+  # Frontend: Angular
+  frontend:
+    build:
+      context: ./data-pulse-frontend
+      dockerfile: Dockerfile
+    container_name: pulse_frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+    volumes:
+      - ./data-pulse-frontend:/app
+      - /app/node_modules
