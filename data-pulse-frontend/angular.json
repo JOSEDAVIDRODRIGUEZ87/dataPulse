@@ -7,7 +7,7 @@
   },
   "newProjectRoot": "projects",
   "projects": {
-    "nombre-del-proyecto": {
+    "data-pulse-frontend": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
