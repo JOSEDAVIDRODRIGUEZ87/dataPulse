@@ -1,5 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="p-3">
     <div class="mb-3">
+        <label class="form-label">Nombre del Portafolio</label>
         <input formControlName="nombre" class="form-control" placeholder="Nombre">
         @if (form.get('nombre')?.hasError('nombreDuplicado')) {
         <small class="text-danger">Este nombre ya está en uso.</small>
@@ -7,45 +8,73 @@
     </div>
 
     <div class="mb-3">
+        <label class="form-label">Descripción</label>
         <textarea formControlName="descripcion" class="form-control" maxlength="500"></textarea>
-        <div class="text-end text-muted">
-            {{ form.get('descripcion')?.value?.length || 0 }} / 500
-        </div>
+        <div class="text-end text-muted">{{ form.get('descripcion')?.value?.length || 0 }} / 500</div>
     </div>
 
-    <div class="form-check">
+    <div class="form-check mb-4">
         <input type="checkbox" formControlName="esPublico" class="form-check-input" id="checkPub">
         <label class="form-check-label" for="checkPub">¿Es público?</label>
     </div>
+
     <table class="table align-middle">
         <thead>
             <tr>
                 <th>País</th>
                 <th>Tipo</th>
-                <th>Monto</th>
-                <th>Riesgo (0-1)</th>
+                <th>Monto (USD)</th>
+                <th>Fecha Entrada</th>
+                <th>Notas</th>
                 <th>Acción</th>
             </tr>
         </thead>
         <tbody formArrayName="posiciones">
             @for (pos of posiciones.controls; track pos; let i = $index) {
             <tr [formGroupName]="i">
-                <td><input formControlName="pais" class="form-control" placeholder="Ej: EE.UU."></td>
+                <td>
+                    <input formControlName="pais" list="paises" class="form-control" placeholder="Buscar...">
+                    <datalist id="paises">
+                        <option value="Colombia">
+                        <option value="EE.UU.">
+                        <option value="México">
+                    </datalist>
+                </td>
+
                 <td>
                     <select formControlName="tipo_activo" class="form-select">
                         <option value="Acción">Acción</option>
                         <option value="Bono">Bono</option>
                         <option value="Cripto">Cripto</option>
+                        <option value="MONEDA">MONEDA</option>
                     </select>
                 </td>
+
                 <td><input type="number" formControlName="monto" class="form-control"></td>
-                <td><input type="number" formControlName="riesgo" class="form-control" step="0.1" min="0" max="1"></td>
-                <td><button type="button" (click)="posiciones.removeAt(i)" class="btn btn-outline-danger">X</button>
+
+                <td><input type="date" formControlName="fechaEntrada" class="form-control"></td>
+
+                <td><input formControlName="notas" class="form-control" maxlength="200"></td>
+
+                <td>
+                    <button type="button" (click)="posiciones.removeAt(i)" class="btn btn-outline-danger">X</button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    @if (pos.hasError('errorMonedaUsd')) { <small class="text-danger d-block">EE.UU. no permite tipo
+                        MONEDA.</small> }
+                    @if (pos.hasError('limiteTipoPais')) { <small class="text-danger d-block">Máximo 2 activos iguales
+                        por país.</small> }
                 </td>
             </tr>
             }
         </tbody>
     </table>
+
+    @if (form.get('posiciones')?.hasError('limiteMontoGlobal')) {
+    <div class="alert alert-danger">El monto total del portafolio no puede superar $50,000,000 USD.</div>
+    }
 
     <div class="d-flex gap-2 mt-3">
         <button type="button" (click)="agregarPosicion()" class="btn btn-secondary">+ Agregar Posición</button>

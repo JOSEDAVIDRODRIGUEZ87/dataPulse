@@ -20,18 +20,29 @@ export class Crear implements OnInit {
   constructor(private fb: FormBuilder) {
     this.form = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)], [this.nombreUnicoValidator()]],
-      descripcion: ['', [Validators.maxLength(500)]], // <--- IMPORTANTE
+      descripcion: ['', [Validators.maxLength(500)]],
       esPublico: [false],
-      posiciones: this.fb.array([])
+      // AÑADIMOS EL VALIDADOR AQUÍ:
+      posiciones: this.fb.array([], this.posicionesValidator.bind(this))
     });
   }
 
   get posiciones() { return this.form.get('posiciones') as FormArray; }
 
+  // Validación de fecha para que no sea futura
+  fechaNoFuturaValidator(control: AbstractControl): ValidationErrors | null {
+    if (!control.value) return null;
+    const fechaSeleccionada = new Date(control.value);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+    return fechaSeleccionada > hoy ? { fechaFutura: true } : null;
+  }
+
   ngOnInit() {
     if (this.portafolioEditar) {
       this.form.patchValue({
         nombre: this.portafolioEditar.nombre,
+        //descripcion: this.portafolioEditar.descripcion,
         esPublico: this.portafolioEditar.esPublico
       });
 
@@ -43,7 +54,8 @@ export class Crear implements OnInit {
         this.posiciones.push(this.fb.group({
           pais: [p.pais, Validators.required],
           tipo_activo: [p.tipoActivo, Validators.required],
-          monto: [p.monto, [Validators.required, Validators.min(0)]],
+          monto: [p.monto, [Validators.required, Validators.min(1000), Validators.max(10000000)]],
+          // fechaEntrada: [p.fechaEntrada, [Validators.required, this.fechaNoFuturaValidator]],
           riesgo: [p.riesgo || 0, Validators.required]
         }));
       });
@@ -54,8 +66,9 @@ export class Crear implements OnInit {
     const nuevaPos = this.fb.group({
       pais: ['', Validators.required],
       tipo_activo: ['Acción', Validators.required],
-      monto: [0, [Validators.required, Validators.min(0)]],
-      riesgo: [0.5, [Validators.required, Validators.min(0), Validators.max(1)]]
+      monto: [1000, [Validators.required, Validators.min(1000), Validators.max(10000000)]],
+      fechaEntrada: ['', [Validators.required, this.fechaNoFuturaValidator]],
+      notas: ['', Validators.maxLength(200)]
     });
     this.posiciones.push(nuevaPos);
   }
@@ -80,5 +93,36 @@ export class Crear implements OnInit {
         catchError(() => of(null))
       );
     };
+  }
+  // En tu clase Crear:
+  posicionesValidator(control: AbstractControl): ValidationErrors | null {
+    const formArray = control as FormArray;
+    const posiciones = formArray.controls;
+    let montoTotal = 0;
+
+    posiciones.forEach((pos, index) => {
+      const valor = pos.value;
+      montoTotal += (valor.monto || 0);
+
+      // Regla 1: No MONEDA si el país es 'EE.UU.' (suponiendo que EE.UU. es el país USD)
+      if (valor.pais === 'EE.UU.' && valor.tipo_activo === 'MONEDA') {
+        pos.setErrors({ errorMonedaUsd: true });
+      }
+
+      // Regla 3: No más de 2 posiciones del mismo tipo en el mismo país
+      const duplicados = posiciones.filter(item =>
+        item.value.pais === valor.pais && item.value.tipo_activo === valor.tipo_activo
+      );
+      if (duplicados.length > 2) {
+        pos.setErrors({ limiteTipoPais: true });
+      }
+    });
+
+    // Regla 2: Monto total <= 50,000,000
+    if (montoTotal > 50000000) {
+      return { limiteMontoGlobal: true };
+    }
+
+    return null;
   }
 }
